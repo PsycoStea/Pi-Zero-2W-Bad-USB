@@ -1,89 +1,116 @@
 # Pi Zero 2W BadUSB (Bookworm, 64-bit)
 
 ## Overview
-Transform a Raspberry Pi Zero 2W (Pi OS Lite 64-bit, Bookworm) into an automated USB keyboard attack platform—just plug it into a computer's USB data port and it launches your scripted keystrokes using user-friendly Ducky Script commands. No Python knowledge needed!
+Transform your Raspberry Pi Zero 2W into a fully automated USB keyboard payload delivery device running Ducky Script! Includes customizable LED blink feedback for non-coders and a modern Pi OS Bookworm 64-bit setup.
+
+---
 
 ## Features
-- Turn-key and easy: edit a text payload, plug in, and go
-- Ducky Script-style scripting for non-coders
-- Modern: works with Pi OS Lite Bookworm 64-bit, kernel 6.x+
-- Robust: all key mappings, systemd service, and error handling included
+- Plug-and-play keystroke script execution at boot or on USB connect
+- Payloads written in easy Ducky Script (non-coders welcome)
+- Fully adjustable typing/combo/ENTER speed at the top of the script
+- Customizable ACT LED blinking pattern at payload completion
+- Works on Pi OS Bookworm 64-bit for Pi Zero 2W (kernel 6.x tested)
 
 ---
 
 ## Hardware Requirements
 - Raspberry Pi Zero 2W
 - microSD card (8GB+)
-- Data-capable USB cable
-- Host computer (Windows, Linux, Mac)
+- USB data cable (not just charging cable)
+- Host PC for testing (Windows, Linux, Mac)
+- (Optional) Breadboard button for GPIO triggering (advanced)
 
 ---
 
-## Quick Setup
+## 1. Pi OS Setup and Prerequisites
 
-1. **Prepare your Pi**
-   - Flash Pi OS Lite (Bookworm, 64-bit)
-   - Edit `/boot/config.txt` to add:
-     ```
-     dtoverlay=dwc2
-     ```
-   - Edit `/boot/cmdline.txt` after `rootwait` (all one line!):
-     ```
-     modules-load=dwc2
-     ```
-2. **Copy repo to `/home/pi/pi-badusb/`**
-3. **Make all scripts executable:**
-   ```bash
-   chmod +x gadget_setup.sh autorun.sh run_payload.py
-   ```
-4. **Create the systemd service:**
-   `/etc/systemd/system/pi-badusb.service`:
-   ```
-   [Unit]
-   Description=Pi Zero 2W BadUSB Startup Payload
-   After=multi-user.target
+1. **Flash Pi OS Lite (Bookworm, 64-bit) to your SD card.**
 
-   [Service]
-   Type=simple
-   ExecStart=/home/pi/pi-badusb/autorun.sh
-   ExecStop=/bin/bash -c 'echo "" | tee /sys/kernel/config/usb_gadget/g1/UDC'
-   RemainAfterExit=yes
-   User=root
+2. **Edit `/boot/config.txt`:**
+    Add to the end:
+    ```
+    dtoverlay=dwc2
+    ```
 
-   [Install]
-   WantedBy=multi-user.target
-   ```
-   Enable with:
-   ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable pi-badusb.service
-   sudo systemctl start pi-badusb.service
-   ```
+3. **Edit `/boot/cmdline.txt`:**
+    After `rootwait` (all one line!), add:
+    ```
+    modules-load=dwc2
+    ```
+
+4. Boot your Pi, then clone/copy this repository to `/home/pi/pi-badusb/`.
+   
+5. Make scripts executable:
+    ```bash
+    chmod +x gadget_setup.sh autorun.sh run_payload.py monitor_and_run.py reload_gadget.sh
+    ```
 
 ---
 
-## Usage
-1. Power off your Pi
-2. Plug Pi’s USB data port (**not PWR**) into your target machine
-3. Wait 5–10 seconds for the payload to run
-4. Edit `payload.txt` to change the attack (just unplug and replug the Pi to use new scripts)
+## 2. Systemd Service Setup
+
+1. Create `/etc/systemd/system/pi-badusb.service` with:
+    
+    ```
+    [Unit]
+    Description=Pi Zero 2W BadUSB Startup Payload
+    After=multi-user.target
+
+    [Service]
+    Type=simple
+    ExecStart=/home/pi/pi-badusb/autorun.sh
+    ExecStop=/bin/bash -c 'echo "" | tee /sys/kernel/config/usb_gadget/g1/UDC'
+    RemainAfterExit=yes
+    User=root
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+2. Enable the service:
+    ```bash
+    sudo systemctl daemon-reload
+    sudo systemctl enable pi-badusb.service
+    sudo systemctl start pi-badusb.service
+    ```
 
 ---
 
-## Write Your Own Payloads—No Code Needed
+## 3. Script & Payload Execution
 
-Write or edit `/home/pi/pi-badusb/payload.txt` using these commands:
+- **At boot or USB connection:** The Pi executes any payload found in `payload.txt`.
+- **Script typing speed** and **LED blinking** are user-adjustable by editing constants at the top of `run_payload.py`:
 
-- `REM ...`             Comment line
-- `DELAY ms`            Pause (ms)
-- `STRING text`         Types the text
-- `ENTER`, `TAB`, `ESC`, `BACKSPACE`, `SPACE` etc.
-- Arrow keys: `UP`, `DOWN`, `LEFT`, `RIGHT`
+    ```python
+    # Delay between individual keys/typing
+    KEY_DELAY = 0.01        # (seconds, default: 0.01 = 10ms)
+    COMBO_DELAY = 0.02      # (after modifier/combo keys)
+    ENTER_DELAY = 0.03      # (after pressing ENTER)
+
+    # Wait before LED blink feedback starts after payload
+    POST_PAYLOAD_BLINK_WAIT = 1.0  # (seconds)
+
+    # LED Blink pattern: list of (on_time, off_time), e.g. 5 blinks fast:
+    BLINK_PATTERN = [(0.1, 0.1)] * 5
+    ```
+
+---
+
+## 4. Ducky Script Payloads (No Coding Needed)
+
+Edit `payload.txt` using these simple commands (one per line):
+
+- `REM ...`           — Comment
+- `DELAY ms`          — Pause (ms)
+- `STRING text`       — Types the text
+- Basic keys: `ENTER`, `TAB`, `ESC`, `BACKSPACE`, `SPACE`, etc.
+- Arrows: `UP`, `DOWN`, `LEFT`, `RIGHT`
 - Navigation: `HOME`, `END`, `INSERT`, `DELETE`, `PAGEUP`, `PAGEDOWN`
 - F1–F12
-- Modifier combos: `CTRL`, `ALT`, `SHIFT`, `GUI` (Win/Cmd), e.g. `CTRL c`, `GUI r`, `CTRL SHIFT ESC`, `ALT TAB`
+- Combo keys: `CTRL`, `ALT`, `SHIFT`, `GUI` (Win/Cmd), e.g. `CTRL c`, `GUI r`, `ALT F4`, `CTRL SHIFT ESC`
 
-**Example:**
+**Example payload:**
 ```
 REM Launch Notepad and type Hello World!
 GUI r
@@ -91,27 +118,51 @@ DELAY 500
 STRING notepad
 ENTER
 DELAY 800
-STRING Hello World from Pi Zero!
+STRING Hello from Pi Zero 2W!
 ENTER
 ```
-For a full command reference see [`DUCKY_COMMANDS.md`](./DUCKY_COMMANDS.md).
+See `DUCKY_COMMANDS.md` for a full command list.
 
 ---
 
-## Troubleshooting
-- No typing? Ensure a data USB cable and correct port
-- Service fails? Check `sudo systemctl status pi-badusb.service`
-- Numbers or keys not working? Pull latest version and check `run_payload.py`
-- BrokenPipeError? Confirm the Pi is plugged into a host and `/dev/hidg0` exists
+## 5. LED Blink Customization
+
+- The green ACT LED blinks a pattern after payload runs.
+- Blink settings are set at the top of `run_payload.py`:
+
+    ```python
+    BLINK_PATTERN = [(0.2, 0.2)] * 10           # 10 moderate blinks
+    # BLINK_PATTERN = [(0.3, 0.1)]*3 + [(0.1,0.1)]*3   # Morse: 3 long, 3 short
+    POST_PAYLOAD_BLINK_WAIT = 1.0               # Wait (s) before blinking
+    ```
+- LED always ends ON after script finish.
 
 ---
 
-## ⚠️ Legal Notice ⚠️
-> For educational/authorised testing only. Never use on devices you don't own or have explicit permission to test.
+## 6. Troubleshooting & Tips
+
+- **LED does not blink?**
+    - Only runs as root/sudo or via systemd service.
+    - Use `/sys/class/leds/ACT/*` not `led0` for modern Pi OS/Pi Zero 2W.
+- **No `/dev/hidg0`?**
+    - Confirm use of data cable and check `/boot/config.txt`/`cmdline.txt`.
+- **No typing?**
+    - Use a USB data cable, the correct USB port, and check your payload.
+- **Numbers/special keys not working?**
+    - Update to the latest `run_payload.py` implementation for correct mappings.
+- **Script typing too slow/fast?**
+    - Adjust `KEY_DELAY`, `COMBO_DELAY`, `ENTER_DELAY` at top of `run_payload.py`.
+- **BrokenPipeError?**
+    - Only run when Pi is plugged into a host and `/dev/hidg0` exists.
+
+---
+
+## Legal Notice
+> For use on devices/networks you own or have explicit permission to test. Never use for unauthorized access.
 
 ---
 
 ## Credits & Contributing
-- PsycoStea ❤️
-- Original Ducky Script by Hak5; inspired by many in the Pi/infosec community.
-- PRs and issues welcome! Improvements and payloads encouraged.
+- [Your Name or Handle]
+- Inspired by Hak5, Pi, and infosec/maker communities
+- Contributions, issues, and PRs are welcome!
