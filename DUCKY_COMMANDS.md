@@ -1,4 +1,3 @@
-
 # Ducky Script Command Reference — Pi Zero 2W BadUSB
 
 This project supports a set of Ducky Script-style commands in your payload (`payload.txt`). Use these commands (one per line) for automating keyboard actions. No programming required!
