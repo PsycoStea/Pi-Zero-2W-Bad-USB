@@ -1,0 +1,8 @@
+REM Launch Notepad and type Hello World!
+GUI r
+DELAY 500
+STRING notepad
+ENTER
+DELAY 800
+STRING Hello World from Pi Zero 2W!
+ENTER
