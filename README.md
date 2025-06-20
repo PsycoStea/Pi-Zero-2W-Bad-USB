@@ -157,12 +157,20 @@ See `DUCKY_COMMANDS.md` for a full command list.
 
 ---
 
-## Legal Notice
+## ⚠️Legal Notice⚠️
 > For use on devices/networks you own or have explicit permission to test. Never use for unauthorized access.
 
 ---
 
 ## Credits & Contributing
-- [Your Name or Handle]
+- PsycoStea ❤️
 - Inspired by Hak5, Pi, and infosec/maker communities
 - Contributions, issues, and PRs are welcome!
+
+---
+
+[![Star History Chart](https://api.star-history.com/svg?repos=PsycoStea/Pi-Zero-2W-Bad-USB&type=Date)](https://www.star-history.com/#PsycoStea/Pi-Zero-2W-Bad-USB&Date)
+
+---
+
+The project was vibe coded
