@@ -95,7 +95,7 @@ chmod +x gadget_setup.sh autorun.sh run_payload.py
 
 ## Write Your Own Keyboard Automation Scripts—No Coding Needed!
 
-Just edit `payload.txt` in the `pi-badusb` folder using the following commands—no programming needed!
+Just edit `payload.txt` in the `pi-badusb` folder using the following commands—no programming needed! View file DUCKY_COMMANDS.md for a list of what you can do.
 
 ### Supported Commands:
 - `REM ...`   (Comment, ignored)
@@ -116,7 +116,7 @@ DELAY 400
 STRING Hello World from Pi Zero!
 ENTER
 ```
-Just edit the file and reboot or unplug+replug your Pi Zero 2W. **No Python or programming skills needed!**
+Just edit the file and reboot or unplug and replug your Pi Zero 2W. **No Python or programming skills needed!**
 
 ---
 
