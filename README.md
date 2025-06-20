@@ -106,12 +106,12 @@ For a full command reference see [`DUCKY_COMMANDS.md`](./DUCKY_COMMANDS.md).
 
 ---
 
-## Legal Notice
-> For educational/authorized testing only. Never use on devices you don't own or have explicit permission to test.
+## ⚠️ Legal Notice ⚠️
+> For educational/authorised testing only. Never use on devices you don't own or have explicit permission to test.
 
 ---
 
 ## Credits & Contributing
-- [Your Name or Handle]
+- PsycoStea ❤️
 - Original Ducky Script by Hak5; inspired by many in the Pi/infosec community.
 - PRs and issues welcome! Improvements and payloads encouraged.
