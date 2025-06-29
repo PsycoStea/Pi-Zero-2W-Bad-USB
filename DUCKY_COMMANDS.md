@@ -81,3 +81,63 @@ CTRL c
 ---
 
 **Questions? Feature requests? Contribute on GitHub or open an issue!**
+
+
+# Ducky Script Commands (Pi Zero 2W Enhanced)
+
+**Last updated: July 2024**
+
+## General Notes
+- All delays are now in milliseconds (ms).
+- Only `KEY_DELAY` is affected by JITTER (random +0 to +JITTER_MAX ms per keypress).
+- `COMBO_DELAY` and `ENTER_DELAY` are constant and never affected by JITTER.
+- You can use DEFINE, VAR, and JITTER config in any order at the top of payloads.
+- `RANDOM_...` commands supported for generating dynamic data.
+
+---
+
+## Supported Ducky Script Commands & Features
+
+| Command                         | Description                                                  |
+|----------------------------------|--------------------------------------------------------------|
+| DEFINE #NAME VALUE               | Define a compile-time macro for use elsewhere in script      |
+| VAR name value                   | Define variable, available with ${name} syntax               |
+| $_JITTER_ENABLED = TRUE/FALSE    | Enable/disable JITTER effect (random delay, see below)       |
+| $_JITTER_MAX = N                 | Max jitter (ms) to add to KEY_DELAY for realism              |
+| DELAY ms                         | Delay in milliseconds                                       |
+| STRING text                      | Type literal text, per-key delay + jitter                   |
+| STRINGLN text                    | Like STRING, then press ENTER                               |
+| RANDOM_... [=N]                  | Type N random chars, numbers, etc (see table below)         |
+| Any KEY/Modifier (CTRL, GUI, F1) | Standard combo and solo key support                        |
+
+### All RANDOM commands:
+- RANDOM_LOWERCASE_LETTER [=N]
+- RANDOM_UPPERCASE_LETTER [=N]
+- RANDOM_LETTER [=N]
+- RANDOM_NUMBER [=N]
+- RANDOM_SPECIAL [=N]
+- RANDOM_CHAR [=N]
+
+---
+
+## Example: Setup Section at Top
+
+```
+DEFINE #WELCOME Welcome user!
+VAR name alice
+$_JITTER_ENABLED = TRUE
+$_JITTER_MAX = 10
+```
+
+---
+
+## Example: In Payload
+
+```
+DELAY 500
+STRING #WELCOME
+ENTER
+STRING Name: ${name}
+RANDOM_NUMBER = 8
+STRINGLN Completed!
+```
