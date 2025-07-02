@@ -1,69 +1,92 @@
-Pi Zero 2W BadUSB
-A flexible BADUSB/keystroke injection/automation engine using Raspberry Pi Zero 2W, supporting macros, randomization, and realistic typing speeds.
+**Raspberry Pi Zero 2 W BadUSB HID Toolkit**
 
-🚀 Features
-•Flexible Macros: Use both DEFINE (constants) and VAR (variables) at the top of your payload—order does not matter.
-•JITTER for Realism: Keystroke delay uses KEY_DELAY plus a random amount up to JITTER_MAX (never less than KEY_DELAY). JITTER only applies to standard key typing.
-•Accurate Timing: All timing values (KEY_DELAY, COMBO_DELAY, ENTER_DELAY, BLINK_PATTERN) are configured in milliseconds for full control.
-•Accurate Combos and Enters: COMBO_DELAY and ENTER_DELAY are always precise and are never affected by JITTER for maximum host reliability.
-•RANDOM Key Injection: Supports commands like RANDOM_NUMBER, RANDOM_CHAR, etc., with count, for dynamism in payloads.
-•Easy Payload Structure: All configuration goes at the top, followed by your main keystroke payload.
+---
 
-⚙️ Configuration
-Example configuration block at the top of payload.txt:
-DEFINE #GREETING Hello, friend!
-VAR user Alice123
-$_JITTER_ENABLED = TRUE
-$_JITTER_MAX = 5
-•KEY_DELAY: Minimum delay between each regular typed key, in milliseconds.
-•JITTER_MAX: Maximum added random delay per key (ms). Each keystroke: KEY_DELAY + random(0, JITTER_MAX)
-•COMBO_DELAY: Fixed delay after key combos (e.g. CTRL+Something), in ms. Not affected by JITTER.
-•ENTER_DELAY: Fixed delay after ENTER/RETURN or STRINGLN, in ms. Not affected by JITTER.
-•BLINK_PATTERN: List of (on_ms, off_ms) tuples for ACT LED status at the end.
+**Project Description**  
+This project transforms a Raspberry Pi Zero 2 W into a programmable BadUSB/HID attack device for red teaming, penetration testing, and CTFs. The Pi emulates a USB keyboard ("Human Interface Device") and executes automated payloads via user-provided scripts (compatible with Ducky Script-style syntax).
 
-🖥️ Payload Example
-# Setup configuration (order doesn't matter)
-DEFINE #WAIT 1000
-DEFINE #MSG Welcome to the matrix...
-VAR name neo
-$_JITTER_ENABLED = TRUE
-$_JITTER_MAX = 7
+---
 
-# Payload
-DELAY 500
-STRING User: ${name}
-ENTER
-STRING #MSG
-ENTER
-DELAY #WAIT
-STRINGLN Sending some numbers and symbols:
-RANDOM_NUMBER = 8
-RANDOM_SPECIAL = 4
-STRING Script finished!
-ENTER
+**Features**
+- Run arbitrary, parameterised payloads as a USB keyboard.
+- Auto-detect host (PC) connections and execute payload on connection.
+- Fully resets after each attack for reliable re-triggering (WIP.
+- LED indicator support.
 
-🎲 RANDOM COMMANDS
-•RANDOM_LOWERCASE_LETTER [=N]
-•RANDOM_UPPERCASE_LETTER [=N]
-•RANDOM_LETTER [=N]
-•RANDOM_NUMBER [=N]
-•RANDOM_SPECIAL [=N]
-•RANDOM_CHAR [=N]
-Example:
-RANDOM_NUMBER = 8
-RANDOM_SPECIAL = 6
-RANDOM_CHAR    # types one random character
+---
 
-🧩 Setup & Usage
-1.Copy your payload to payload.txt.
-2.Boot the Pi Zero 2W with your BADUSB image.
-3.The script will automatically process setup config, and then type your payload.
-4.Watch the ACT LED blink when done, or add your own blink/status patterns.
+**Hardware/Software Requirements**
+- Raspberry Pi Zero 2 W (running Raspberry Pi OS Lite)
+- USB OTG cable (micro-USB to USB-A)
+- (Optional) Soldered headers for easy access to serial console
+- Python 3
+- Root (sudo) access
 
-⚡️ Tips
-•Keep KEY_DELAY at a safe minimum for your target OS/language (too fast may cause missed keys).
-•Set JITTER_MAX to small values (like 5–10ms) for realism, but not so large as to make input sluggish.
-•Place all DEFINE, VAR, and $_JITTER_... lines at the top for clarity. Order doesn’t matter.
+---
 
-🛠️ Contributions & Issues
-PRs and issues welcome! See the script comments for extending HID/keyboard mappings or adding new features.
+**Setup: Pi Zero 2 W as a USB HID Keyboard**
+
+1. **Enable dwc2 and ConfigFS**  
+   Edit `/boot/config.txt` and add at the end:
+   ```
+   dtoverlay=dwc2
+   ```
+   Edit `/boot/cmdline.txt` and add **after `rootwait`**:
+   ```
+   modules-load=dwc2,g_ether
+   ```
+
+2. **Install Required Packages**  
+   ```bash
+   sudo apt update
+   sudo apt install python3
+   ```
+
+3. **Deploy Scripts & Make Executable**  
+   Copy all project files into `/home/pi/pi-badusb/`.  
+   Make shell scripts executable:
+   ```bash
+   chmod +x /home/pi/pi-badusb/*.sh
+   ```
+
+4. **Configure Startup (Optional)**  
+   To autorun at boot, add the following to your `/etc/rc.local` (before `exit 0`):
+   ```bash
+   /home/pi/pi-badusb/autorun.sh &
+   ```
+
+---
+
+**Usage Instructions**
+
+1. **Prepare a Payload:**  
+   Edit or create `payload.txt` in `/home/pi/pi-badusb/`. Use Ducky Script-like commands (e.g., `STRING`, `ENTER`, `DELAY`, combos, etc.).
+
+2. **First-Time Gadget Setup:**  
+   ```bash
+   sudo /home/pi/pi-badusb/gadget_setup.sh
+   ```
+
+3. **Start the Listener:**  
+   ```bash
+   sudo python3 /home/pi/pi-badusb/monitor_and_run.py
+   ```
+
+4. **Insert Pi Zero 2 W into Target Machine:**  
+   As soon as a host connection is detected, your payload will execute as a keystroke sequence.
+
+5. **For Reuse:**  
+   The device automatically resets itself and waits for the next connection.
+
+---
+
+**Legal Notice**
+:warning:  
+This tool is for educational purposes, penetration testing, and CTFs, **with explicit permission** only.  
+**Never use on machines you do not own or have permission to test. Unauthorized access is illegal.**
+
+---
+
+**Credits**
+- Inspired by USB Rubber Ducky, Hak5, and USB Gadget research.  
+- Project scripts: Psycostea <3
