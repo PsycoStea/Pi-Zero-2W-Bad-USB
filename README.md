@@ -75,8 +75,8 @@ This project transforms a Raspberry Pi Zero 2 W into a programmable BadUSB/HID a
 4. **Insert Pi Zero 2 W into Target Machine:**  
    As soon as a host connection is detected, your payload will execute as a keystroke sequence.
 
-5. **For Reuse:**  
-   The device automatically resets itself and waits for the next connection.
+5. **For Reuse: (WIP)**  
+   The device automatically resets itself and waits for the next connection. (Currently, the device needs to be power-cycled)
 
 ---
 
