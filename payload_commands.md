@@ -35,20 +35,12 @@ Below are the recognised commands your payload.txt can use with this toolkit.
 | `LEFT` | Press the LEFT key |
 | `PAGEDOWN` | Press the PAGEDOWN key |
 | `PAGEUP` | Press the PAGEUP key |
-| `RANDOM_CHAR` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_CHAR <count>` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_LETTER` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_LETTER <count>` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_LOWERCASE_LETTER` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_LOWERCASE_LETTER <count>` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_NUMBER` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_NUMBER <count>` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_POOLS` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_POOLS <count>` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_SPECIAL` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_SPECIAL <count>` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_UPPERCASE_LETTER` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
-| `RANDOM_UPPERCASE_LETTER <count>` | Type random characters of the specified type; e.g., RANDOM_NUMBER 4 |
+| `RANDOM_CHAR <count>` | RANDOM_CHAR <count> Types the specified number of random printable characters (letters, digits, special characters). eg. RANDOM_CHAR 12 (Will type 12 characters, e.g. "N7a%K8xLS@3#") |
+| `RANDOM_LETTER <count>` | RANDOM_LETTER <count> Types the specified number of random mixed-case letters (a-z, A-Z). eg. RANDOM_LETTER 8 (Will type 8 letters, upper or lower case, e.g. "jLUtyQaM") |
+| `RANDOM_LOWERCASE_LETTER <count>` | Types the specified number of random lowercase letters (a-z). eg. RANDOM_LOWERCASE_LETTER 10 (Will type 10 random lowercase letters, such as "msrcqptvab") |
+| `RANDOM_NUMBER <count>` | RANDOM_NUMBER <count> Types the specified number of numeric digits (0-9). eg. RANDOM_NUMBER 6 (Will type 6 random digits, e.g. "370215") |
+| `RANDOM_SPECIAL <count>` | RANDOM_SPECIAL <count> Types the specified number of special symbols from !@#$%^&*(). eg. RANDOM_SPECIAL 4 (Will type 4 special symbols, e.g. "^%@&")|
+| `RANDOM_UPPERCASE_LETTER <count>` | RANDOM_UPPERCASE_LETTER <count> Types the specified number of random uppercase letters (A-Z). eg. RANDOM_UPPERCASE_LETTER 5 (Will type 5 random uppercase letters, such as "ZCTAS") |
 | `REM <text>  # Comment` | Comment line (ignored during execution) |
 | `RETURN` | Press the RETURN key |
 | `RIGHT` | Press the RIGHT key |
