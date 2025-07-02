@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-sleep 5
+sleep 3
 /home/pi/pi-badusb/gadget_setup.sh
-sleep 5
+sleep 3
 /usr/bin/python3 /home/pi/pi-badusb/monitor_and_run.py
