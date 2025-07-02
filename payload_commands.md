@@ -4,7 +4,7 @@ Below are the recognised commands your payload.txt can use with this toolkit.
 
 | Command | Description |
 | ------- | ----------- |
-| ``$_JITTER_ENABLED=TRUE|FALSE`` | Enable or disable per keystroke jitter (random delay) |
+| `$_JITTER_ENABLED=TRUE/FALSE` | Enable or disable per keystroke jitter (random delay) |
 | `$_JITTER_MAX=<int>` | Set maximum jitter delay (ms) |
 | `BACKSPACE` | Press the BACKSPACE key |
 | `CAPSLOCK` | Press the CAPSLOCK key |
