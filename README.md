@@ -90,3 +90,8 @@ This tool is for educational purposes, penetration testing, and CTFs, **with exp
 **Credits**
 - Inspired by USB Rubber Ducky, Hak5, and USB Gadget research.  
 - Project scripts: Psycostea <3
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=PsycoStea/Pi-Zero-2W-Bad-USB&type=Date)](https://www.star-history.com/#PsycoStea/Pi-Zero-2W-Bad-USB&Date)
