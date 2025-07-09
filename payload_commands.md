@@ -56,7 +56,7 @@ Below are the recognized commands your payload.txt can use with this toolkit.
 
 | Command | Description |
 | ------- | ----------- |
-| `VAR <name>=<value or expression>` | Create or update a variable. Supports math (e.g. VAR X=Y+1) |
+| `VAR <$name>=<value or expression>` | Create or update a variable. Supports math (e.g. VAR $X=$Y+1) |
 | `IF <var> <operator> <value>` | Begin an IF conditional block (operators: == != > < >= <=). |
 | `ELSE` | Alternative branch for IF block. |
 | `END_IF` | End of IF or ELSE block. |
@@ -96,15 +96,15 @@ Below are the recognized commands your payload.txt can use with this toolkit.
 
 ## `VAR <name>=<value or expression>`
 ```
-VAR COUNT=5
-VAR USERNAME=admin
-VAR SUM=COUNT+10
+VAR $COUNT=5
+VAR $USERNAME=admin
+VAR $SUM=$COUNT+10
 ```
 
 ## `IF` / `ELSE` / `END_IF`
 ```
-VAR COUNT=5
-IF COUNT > 3
+VAR $COUNT=5
+IF $COUNT > 3
   STRING Count is greater than 3
 ELSE
   STRING Count is not greater than 3
@@ -113,17 +113,11 @@ END_IF
 
 ## `WHILE` / `END_WHILE`
 ```
-VAR I=0
-WHILE I < 3
-  STRINGLN Loop iteration ${I}
-  VAR I=I+1
+VAR $I=0
+WHILE $I < 3
+  STRINGLN Loop iteration $I
+  VAR $I = $I + 1
 END_WHILE
-```
-
-## `LOOP <count>`
-```
-LOOP 3
-  STRINGLN This line will print three times
 ```
 
 ## `REM` / `REM_BLOCK` / `END_REM`
@@ -172,7 +166,7 @@ INJECT_MOD 0x02
 ## `DELAY <ms>`
 ```
 DELAY 500
-STRINGLN This types after a 0.5 second pause
+STRINGLN This types out after a 0.5 second pause
 ```
 
 ## `DEFINE <#KEY> <substitute>`
