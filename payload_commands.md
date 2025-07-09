@@ -1,6 +1,6 @@
 # BadUSB Payload Command Reference
 
-Below are the recognised commands your payload.txt can use with this toolkit.
+Below are the recognized commands your payload.txt can use with this toolkit.
 
 | Command | Description |
 | ------- | ----------- |
@@ -35,18 +35,237 @@ Below are the recognised commands your payload.txt can use with this toolkit.
 | `LEFT` | Press the LEFT key |
 | `PAGEDOWN` | Press the PAGEDOWN key |
 | `PAGEUP` | Press the PAGEUP key |
-| `RANDOM_CHAR <count>` | RANDOM_CHAR <count> Types the specified number of random printable characters (letters, digits, special characters). eg. RANDOM_CHAR 12 (Will type 12 characters, e.g. "N7a%K8xLS@3#") |
-| `RANDOM_LETTER <count>` | RANDOM_LETTER <count> Types the specified number of random mixed-case letters (a-z, A-Z). eg. RANDOM_LETTER 8 (Will type 8 letters, upper or lower case, e.g. "jLUtyQaM") |
-| `RANDOM_LOWERCASE_LETTER <count>` | Types the specified number of random lowercase letters (a-z). eg. RANDOM_LOWERCASE_LETTER 10 (Will type 10 random lowercase letters, such as "msrcqptvab") |
-| `RANDOM_NUMBER <count>` | RANDOM_NUMBER <count> Types the specified number of numeric digits (0-9). eg. RANDOM_NUMBER 6 (Will type 6 random digits, e.g. "370215") |
-| `RANDOM_SPECIAL <count>` | RANDOM_SPECIAL <count> Types the specified number of special symbols from !@#$%^&*(). eg. RANDOM_SPECIAL 4 (Will type 4 special symbols, e.g. "^%@&")|
-| `RANDOM_UPPERCASE_LETTER <count>` | RANDOM_UPPERCASE_LETTER <count> Types the specified number of random uppercase letters (A-Z). eg. RANDOM_UPPERCASE_LETTER 5 (Will type 5 random uppercase letters, such as "ZCTAS") |
-| `REM <text>  # Comment` | Comment line (ignored during execution) |
+| `RANDOM_CHAR <count>` | Types the specified number of random printable characters (letters, digits, special). |
+| `RANDOM_LETTER <count>` | Types the specified number of random mixed-case letters. |
+| `RANDOM_LOWERCASE_LETTER <count>` | Types a random lowercase string. |
+| `RANDOM_NUMBER <count>` | Types random numbers. |
+| `RANDOM_SPECIAL <count>` | Types random special characters. |
+| `RANDOM_UPPERCASE_LETTER <count>` | Types random uppercase letters. |
 | `RETURN` | Press the RETURN key |
 | `RIGHT` | Press the RIGHT key |
+| `SCROLLLOCK` | Press the SCROLLLOCK key |
+| `SHIFT` | Press the SHIFT key |
 | `SPACE` | Press the SPACE key |
-| `STRING <text>` | Type the specified text as keystrokes |
-| `STRINGLN <text>` | Type the specified text followed by ENTER |
 | `TAB` | Press the TAB key |
 | `UP` | Press the UP key |
-| `VAR <NAME> <content>` | Define a variable that can be injected in the following commands using ${NAME} |
+| `WINDOWS` | Press the WINDOWS key |
+
+---
+
+**Advanced Flow & Logic Commands**
+
+| Command | Description |
+| ------- | ----------- |
+| `VAR <name>=<value or expression>` | Create or update a variable. Supports math (e.g. VAR X=Y+1) |
+| `IF <var> <operator> <value>` | Begin an IF conditional block (operators: == != > < >= <=). |
+| `ELSE` | Alternative branch for IF block. |
+| `END_IF` | End of IF or ELSE block. |
+| `WHILE <var> <operator> <value>` | Begin a WHILE loop (see IF for operators). |
+| `END_WHILE` | End a WHILE block. |
+| `LOOP <count>` | Repeat the next command or block <count> times. |
+
+**Comment Blocks**
+
+| Command | Description |
+| ------- | ----------- |
+| `REM` | Begin a single-line comment. |
+| `REM_BLOCK` | Begin a multi-line comment. |
+| `END_REM` | End a REM_BLOCK. |
+
+**String and Typing Enhancements**
+
+| Command | Description |
+| ------- | ----------- |
+| `STRINGLN <text>` | Type text, then press ENTER (newline). |
+| `STRING_BLOCK` | Begin multi-line string typing (continues until END_STRING). |
+| `END_STRING` | Ends STRING_BLOCK. |
+| `STRINGLN_BLOCK` | Begin multi-line string typing, typing each line followed by ENTER. |
+| `END_STRINGLN` | Ends STRINGLN_BLOCK. |
+
+**Keyboard State and Modifiers**
+
+| Command | Description |
+| ------- | ----------- |
+| `HOLD <key/mod>` | Hold a key or modifier until released. |
+| `RELEASE <key/mod>` | Release a previously-held key or modifier. |
+| `INJECT_MOD <modifier_code>` | Inject a raw modifier byte. Use with care! |
+
+---
+
+# Command Examples
+
+## `VAR <name>=<value or expression>`
+```
+VAR COUNT=5
+VAR USERNAME=admin
+VAR SUM=COUNT+10
+```
+
+## `IF` / `ELSE` / `END_IF`
+```
+VAR COUNT=5
+IF COUNT > 3
+  STRING Count is greater than 3
+ELSE
+  STRING Count is not greater than 3
+END_IF
+```
+
+## `WHILE` / `END_WHILE`
+```
+VAR I=0
+WHILE I < 3
+  STRINGLN Loop iteration ${I}
+  VAR I=I+1
+END_WHILE
+```
+
+## `LOOP <count>`
+```
+LOOP 3
+  STRINGLN This line will print three times
+```
+
+## `REM` / `REM_BLOCK` / `END_REM`
+```
+REM This line is a comment
+
+REM_BLOCK
+Everything in this block
+is commented out and will not run
+END_REM
+```
+
+## `STRINGLN <text>`
+```
+STRINGLN Hello, world!
+```
+
+## `STRING_BLOCK` / `END_STRING`
+```
+STRING_BLOCK
+This is line one.
+This is line two.
+END_STRING
+```
+
+## `STRINGLN_BLOCK` / `END_STRINGLN`
+```
+STRINGLN_BLOCK
+First line
+Second line
+END_STRINGLN
+```
+
+## `HOLD <key/mod>` / `RELEASE <key/mod>`
+```
+HOLD SHIFT
+STRINGLN Text in CAPITALS
+RELEASE SHIFT
+```
+
+## `INJECT_MOD <modifier_code>`
+```
+INJECT_MOD 0x02
+```
+
+## `DELAY <ms>`
+```
+DELAY 500
+STRINGLN This types after a 0.5 second pause
+```
+
+## `DEFINE <#KEY> <substitute>`
+```
+DEFINE #EMAIL user@example.com
+STRINGLN My email: #EMAIL
+```
+
+## `RANDOM_CHAR <count>`
+```
+RANDOM_CHAR 10
+```
+Prints 10 random printable chars.
+
+## `RANDOM_LETTER <count>`
+```
+RANDOM_LETTER 8
+```
+Prints 8 random mixed-case letters.
+
+## `RANDOM_LOWERCASE_LETTER <count>`
+```
+RANDOM_LOWERCASE_LETTER 12
+```
+
+## `RANDOM_NUMBER <count>`
+```
+RANDOM_NUMBER 5
+```
+
+## `RANDOM_SPECIAL <count>`
+```
+RANDOM_SPECIAL 6
+```
+
+## `RANDOM_UPPERCASE_LETTER <count>`
+```
+RANDOM_UPPERCASE_LETTER 7
+```
+
+## Modifier Keys
+```
+ALT
+CTRL
+CONTROL
+SHIFT
+GUI
+WINDOWS
+COMMAND
+```
+
+## Navigation Keys
+```
+LEFT
+RIGHT
+UP
+DOWN
+HOME
+END
+PAGEUP
+PAGEDOWN
+INSERT
+DELETE
+DEL
+BACKSPACE
+```
+
+## Function Keys
+```
+F1
+F2
+F3
+F4
+F5
+F6
+F7
+F8
+F9
+F10
+F11
+F12
+```
+
+## Utility Keys
+```
+ENTER
+RETURN
+TAB
+ESC
+ESCAPE
+SPACE
+CAPSLOCK
+SCROLLLOCK
+PRINTSCREEN
+PAUSE
+```
