@@ -49,7 +49,7 @@ KEYS = {
     '=': (0x2e, 0), '+': (0x2e, MODIFIERS['SHIFT']),
     '[': (0x2f, 0), '{': (0x2f, MODIFIERS['SHIFT']),
     ']': (0x30, 0), '}': (0x30, MODIFIERS['SHIFT']),
-    '\\': (0x31, 0), '|': (0x31, MODIFIERS['SHIFT']),
+    '\\\\': (0x31, 0), '|': (0x31, MODIFIERS['SHIFT']),
     ';': (0x33, 0), ':': (0x33, MODIFIERS['SHIFT']),
     "'": (0x34, 0), '"': (0x34, MODIFIERS['SHIFT']),
     '`': (0x35, 0), '~': (0x35, MODIFIERS['SHIFT']),
@@ -138,7 +138,7 @@ def evaluate_math_expression(expression, variables):
     # This function now assumes variables have already been substituted.
     # It's for evaluating a string that should be a mathematical expression.
     processed_expr = expression
-    if not re.match(r'^[0-9\s()+\-*\/.]*$', processed_expr):
+    if not re.match(r'^[0-9\s()+\-*\/.%]*$', processed_expr):
         raise ValueError("Expression contains non-numeric/non-operator characters")
     return eval(processed_expr)
 
@@ -382,7 +382,7 @@ def process_lines(lines, state):
                     substituted_expression = substitute_vars(expression, state['variables'])
                     
                     # If it's a simple assignment of a string literal (after substitution), don't evaluate
-                    if operator == '=' and re.match(r'^\s*\".*\"\s*$', substituted_expression):
+                    if operator == '=' and re.match(r'^\s*".*"\s*$', substituted_expression):
                         state['variables'][var_name] = substituted_expression.strip().strip('"')
                     else:
                         # Otherwise, evaluate as a math expression
