@@ -135,13 +135,12 @@ def substitute_defines(line, defines):
     return line
 
 def evaluate_math_expression(expression, variables):
-    def replacer(match):
-        var_name = match.group(1)
-        return str(variables.get(var_name, '0'))
-    processed_expr = re.sub(r'(\$[A-Za-z0-9_]+)', replacer, expression)
+    # This function now assumes variables have already been substituted.
+    # It's for evaluating a string that should be a mathematical expression.
+    processed_expr = expression
     if not re.match(r'^[0-9\s()+\-*\/.]*$', processed_expr):
         raise ValueError("Expression contains non-numeric/non-operator characters")
-    return int(eval(processed_expr))
+    return eval(processed_expr)
 
 def evaluate_condition(condition_str, variables):
     condition_str = substitute_vars(condition_str, variables)
@@ -374,25 +373,27 @@ def process_lines(lines, state):
         is_var_command = stripped_line_for_detection.upper().startswith('VAR ')
         if is_var_command:
             print(f"DEBUG: Processing VAR command: '{stripped_line_for_detection}'")
-            match = re.match(r'VAR\s+(\$[A-Za-z0-9_]+)\s*([+\-*/]?=)\s*(.*)', stripped_line_for_detection, re.IGNORECASE)
+            match = re.match(r'VAR\s+(\$[A-Za-z0-9_]+)\s*([+\-*\/]?=)\s*(.*)', stripped_line_for_detection, re.IGNORECASE)
             if match:
                 var_name, operator, expression = match.groups()
-                # THE FIX: Add this line!
                 var_name = var_name[1:].upper()
                 try:
                     # Substitute variables in the expression part only
                     substituted_expression = substitute_vars(expression, state['variables'])
-                    # If it's a simple assignment of a string, don't evaluate
-                    if operator == '=' and re.match(r'^\".*\"$', substituted_expression.strip()):
+                    
+                    # If it's a simple assignment of a string literal (after substitution), don't evaluate
+                    if operator == '=' and re.match(r'^\s*\".*\"\s*$', substituted_expression):
                         state['variables'][var_name] = substituted_expression.strip().strip('"')
                     else:
+                        # Otherwise, evaluate as a math expression
                         rhs_value = evaluate_math_expression(substituted_expression, state['variables'])
+                        
                         if operator == '=':
                             state['variables'][var_name] = parse_number(rhs_value)
-                        else:
-                            current_value = state['variables'].get(var_name, 0)
-                            current_value = parse_number(current_value)
+                        else: # For +=, -=, etc.
+                            current_value = parse_number(state['variables'].get(var_name, 0))
                             rhs_value = parse_number(rhs_value)
+                            
                             if operator == '+=':
                                 new_value = current_value + rhs_value
                             elif operator == '-=':
@@ -401,15 +402,15 @@ def process_lines(lines, state):
                                 new_value = current_value * rhs_value
                             elif operator == '/=':
                                 new_value = int(current_value / rhs_value) if rhs_value != 0 else 0
-                            else:
+                            else: # Should not happen due to regex, but for safety
                                 new_value = rhs_value
                             state['variables'][var_name] = new_value
                 except Exception as e:
                     print(f"[WARN] Error processing VAR: '{rawline.strip()}'. Error: {e}")
             else:
                 print(f"[WARN] Malformed VAR command: '{rawline.strip()}'")
-            pc += 1 # Increment pc here to move to the next line
-            continue # Continue to the next iteration of the while loop
+            pc += 1
+            continue
 
         # Apply substitutions for variables and defines for other single line commands
         line = substitute_vars(line_for_detection, state['variables'])
@@ -480,6 +481,21 @@ def process_lines(lines, state):
                 print(f"[WARN] Cannot RELEASE unknown key: {key_to_release}")
             pc += 1
             continue
+
+        if command_upper.startswith('RANDOM_'):
+            parts = stripped_line.split()
+            command = parts[0].upper()
+            if command in RANDOM_POOLS:
+                length = 10  # Default length
+                if len(parts) > 1 and parts[1].isdigit():
+                    length = int(parts[1])
+                
+                char_pool = RANDOM_POOLS[command]
+                random_string = ''.join(random.choice(char_pool) for _ in range(length))
+                
+                type_string(state['hid_device'], random_string, state['jitter_enabled'], state['jitter_max'], state['held_modifier_byte'])
+                pc += 1
+                continue
 
         words = stripped_line.split()
         words_upper = [w.upper() for w in words]
