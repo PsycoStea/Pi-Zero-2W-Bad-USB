@@ -4,7 +4,7 @@ import subprocess
 
 HID_DEVICE = '/dev/hidg0'
 PAYLOAD_SCRIPT = '/home/pi/pi-badusb/run_payload.py'
-RELOAD_GADGET_SCRIPT = '/home/pi/pi-badusb/reload_gadget.sh'
+RELOAD_GADGET_SCRIPT = '/home/pi/pi-badusb/reload_gadget.sh'  # We'll create this!
 
 def wait_for_writable_hidg(hid_device_path):
     print("BadUSB: Waiting for host (PC) USB connection...")
