@@ -1,4 +1,4 @@
-# BadUSB Payload Command Reference
+# BadPi Payload Command Reference
 
 Below are the recognized commands your payload.txt can use with this toolkit.
 
@@ -54,13 +54,12 @@ Below are the recognized commands your payload.txt can use with this toolkit.
 
 | Command | Description |
 | ------- | ----------- |
-| `VAR <$name>=<value or expression>` | Create or update a variable. Supports math (e.g. VAR $X=$Y+1) |
-| `IF <var> <operator> <value>` | Begin an IF conditional block (operators: == != > < >= <=). |
+| `VAR <$name>=<value or expression>` | Create or update a variable. Supports math operators: `+`, `-`, `*`, `/`, `%`. (e.g. `VAR $X=$Y+1`) |
+| `IF <var> <operator> <value>` | Begin an IF conditional block (operators: `==`, `!=`, `>`, `<`, `>=`, `<=`). |
 | `ELSE` | Alternative branch for IF block. |
 | `END_IF` | End of IF or ELSE block. |
 | `WHILE <var> <operator> <value>` | Begin a WHILE loop (see IF for operators). |
 | `END_WHILE` | End a WHILE block. |
-| `LOOP <count>` | Repeat the next command or block <count> times. |
 
 **Comment Blocks**
 
@@ -84,9 +83,9 @@ Below are the recognized commands your payload.txt can use with this toolkit.
 
 | Command | Description |
 | ------- | ----------- |
-| `HOLD <key/mod>` | Hold a key or modifier until released. |
+| `HOLD <key/mod>` | Hold a key or modifier (e.g. `HOLD SHIFT`). The key remains held until `RELEASE` is used. |
 | `RELEASE <key/mod>` | Release a previously-held key or modifier. |
-| `INJECT_MOD <modifier_code>` | Inject a raw modifier byte. Use with care! |
+| `INJECT_MOD <modifier_code>` | Injects a raw hexadecimal modifier byte to be combined with subsequent key presses. This is an advanced command. The byte is a combination of one or more modifier keys. You can add the hex values of the modifiers together to create a combination. For example, to hold CTRL and SHIFT, you would use `0x03` (`0x01` for CTRL + `0x02` for SHIFT). The modifier is released by injecting `0x00`. |
 
 ---
 
@@ -95,17 +94,18 @@ Below are the recognized commands your payload.txt can use with this toolkit.
 ## `VAR <name>=<value or expression>`
 ```
 VAR $COUNT=5
-VAR $USERNAME=admin
+VAR $USERNAME="admin"
 VAR $SUM=$COUNT+10
+VAR $REMAINDER = 10 % 3
 ```
 
 ## `IF` / `ELSE` / `END_IF`
 ```
 VAR $COUNT=5
 IF $COUNT > 3
-  STRING Count is greater than 3
+  STRINGLN Count is greater than 3
 ELSE
-  STRING Count is not greater than 3
+  STRINGLN Count is not greater than 3
 END_IF
 ```
 
@@ -118,47 +118,36 @@ WHILE $I < 3
 END_WHILE
 ```
 
-## `REM` / `REM_BLOCK` / `END_REM`
-```
-REM This line is a comment
-
-REM_BLOCK
-Everything in this block
-is commented out and will not run
-END_REM
-```
-
-## `STRINGLN <text>`
-```
-STRINGLN Hello, world!
-```
-
-## `STRING_BLOCK` / `END_STRING`
-```
-STRING_BLOCK
-This is line one.
-This is line two.
-END_STRING
-```
-
-## `STRINGLN_BLOCK` / `END_STRINGLN`
-```
-STRINGLN_BLOCK
-First line
-Second line
-END_STRINGLN
-```
-
 ## `HOLD <key/mod>` / `RELEASE <key/mod>`
 ```
 HOLD SHIFT
-STRINGLN Text in CAPITALS
+STRINGLN this text is in capitals
 RELEASE SHIFT
 ```
 
 ## `INJECT_MOD <modifier_code>`
+
+Injects a modifier byte using hexadecimal codes. This is useful for complex key combinations.
+
+**Modifier Codes:**
+| Modifier | Hex Code |
+| -------- | -------- |
+| `CTRL`   | `0x01`   |
+| `SHIFT`  | `0x02`   |
+| `ALT`    | `0x04`   |
+| `GUI`    | `0x08`   |
+
+**Example:**
 ```
-INJECT_MOD 0x02
+REM Hold down CTRL+SHIFT (0x01 + 0x02 = 0x03)
+INJECT_MOD 0x03
+STRING a
+REM This will type 'A' because SHIFT is held, and send it with CTRL
+
+REM Release all modifiers by injecting 0x00
+INJECT_MOD 0x00
+STRING a
+REM This will type 'a'
 ```
 
 ## `DELAY <ms>`
@@ -185,79 +174,18 @@ RANDOM_LETTER 8
 ```
 Prints 8 random mixed-case letters.
 
-## `RANDOM_LOWERCASE_LETTER <count>`
-```
-RANDOM_LOWERCASE_LETTER 12
-```
+---
 
-## `RANDOM_NUMBER <count>`
-```
-RANDOM_NUMBER 5
-```
+## Keys
 
-## `RANDOM_SPECIAL <count>`
-```
-RANDOM_SPECIAL 6
-```
+### Modifier Keys
+`ALT`, `CTRL`, `CONTROL`, `SHIFT`, `GUI`, `WINDOWS`, `COMMAND`
 
-## `RANDOM_UPPERCASE_LETTER <count>`
-```
-RANDOM_UPPERCASE_LETTER 7
-```
+### Navigation Keys
+`LEFT`, `RIGHT`, `UP`, `DOWN`, `HOME`, `END`, `PAGEUP`, `PAGEDOWN`, `INSERT`, `DELETE`, `DEL`, `BACKSPACE`
 
-## Modifier Keys
-```
-ALT
-CTRL
-CONTROL
-SHIFT
-GUI
-WINDOWS
-COMMAND
-```
+### Function Keys
+`F1` - `F12`
 
-## Navigation Keys
-```
-LEFT
-RIGHT
-UP
-DOWN
-HOME
-END
-PAGEUP
-PAGEDOWN
-INSERT
-DELETE
-DEL
-BACKSPACE
-```
-
-## Function Keys
-```
-F1
-F2
-F3
-F4
-F5
-F6
-F7
-F8
-F9
-F10
-F11
-F12
-```
-
-## Utility Keys
-```
-ENTER
-RETURN
-TAB
-ESC
-ESCAPE
-SPACE
-CAPSLOCK
-SCROLLLOCK
-PRINTSCREEN
-PAUSE
-```
+### Utility Keys
+`ENTER`, `RETURN`, `TAB`, `ESC`, `ESCAPE`, `SPACE`, `CAPSLOCK`, `SCROLLLOCK`, `PRINTSCREEN`, `PAUSE`
