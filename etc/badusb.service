@@ -1,0 +1,26 @@
+[Unit]
+Description=Pi Zero 2 W BadUSB HID listener
+After=sys-kernel-config.mount local-fs.target
+ConditionPathExistsGlob=/sys/class/udc/*
+
+[Service]
+Type=simple
+ExecStartPre=/home/pi/pi-badusb/gadget_setup.sh
+ExecStart=/usr/bin/python3 /home/pi/pi-badusb/monitor_and_run.py
+ExecStop=/home/pi/pi-badusb/teardown_gadget.sh
+Restart=on-failure
+RestartSec=2
+StandardOutput=journal
+StandardError=journal
+
+# Listener tunables — override with `sudo systemctl edit badusb` and set
+# Environment="BADUSB_REARM_COOLDOWN_S=8" etc.
+#
+#   BADUSB_POST_PAYLOAD_FLUSH_S  default 0.5  - delay after payload before unbinding
+#   BADUSB_REARM_COOLDOWN_S      default 5    - how long the gadget stays unbound
+#   BADUSB_MIN_INTER_FIRE_S      default 10   - minimum seconds between payload fires
+#   BADUSB_MAX_FIRES_PER_MINUTE  default 6    - hard cap before rate-limit pause
+#   BADUSB_RATELIMIT_PAUSE_S     default 60   - duration of the rate-limit pause
+
+[Install]
+WantedBy=multi-user.target
